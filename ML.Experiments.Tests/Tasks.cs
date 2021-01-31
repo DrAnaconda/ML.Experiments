@@ -1,6 +1,8 @@
 ﻿using MathNet.Numerics.Statistics;
 using Microsoft.ML;
 using Microsoft.ML.TimeSeries;
+using ML.Experiments.API.Abstractions;
+using ML.Experiments.API.Enums;
 using ML.Experiments.API.Models;
 using ML.Experiments.API.Models.DataScienceHelpers;
 using Newtonsoft.Json;
@@ -37,39 +39,15 @@ namespace ML.Experiments.Tests
             var test = results.OrderBy(x=>x.spearsmanValue);
         }
 
-        [Test(Description = "Define anomalies using ML.NET framework")] [Explicit]
-        public async Task tryFoundSeasons()
+        [Test(Description = "Define anomalies using ML.NET framework (date to value)")] [Explicit]
+        public async Task detectAnomalies_DateToValue()
         {
-            var mlContext = new MLContext();
             var dataset = await parser.readFillMergeData(true, false, false, false);
-            var input = dataset.Values.Select(x => new HearthRecordInput() { HRValue = x.HRValue, timestampML = x.timestamp })
+            var input = dataset.Values
+                .Select(x => new HearthRecordInputTimeToValue() { HRValue = x.HRValue, timestampML = x.timestamp })
                 .OrderBy(x=>x.timestampML).ToArray();
-            var data = mlContext.Data.LoadFromEnumerable(input);
-            var periods = mlContext.AnomalyDetection.DetectSeasonality(data, nameof(HeartRecord.HRValue));
-            var outputDataView = mlContext.AnomalyDetection.DetectEntireAnomalyBySrCnn(
-                data, nameof(HeartRecordPrediction.Prediction), nameof(HeartRecord.HRValue), 0.15, input.Length / 4,
-                99, SrCnnDetectMode.AnomalyAndExpectedValue);
-            var predictions = mlContext.Data.CreateEnumerable<HeartRecordPrediction>(outputDataView, reuseRowObject: false).ToArray();
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            int printEnabled = 0;
-            for (int indx = 0; indx < predictions.Count(); indx++)
-            {
-                if (indx + 1 < predictions.Count())
-                {
-                    if (predictions[indx + 1].Prediction[0] == 1)
-                    {
-                        printEnabled = 3;
-                    }
-                }
-                if (printEnabled-- >= 0)
-                {
-                    Console.WriteLine("{0}: {2} at {3} {4} —— {1}", indx, string.Join(" | ", predictions[indx].Prediction),
-                        input[indx].HRValue, dtDateTime.AddSeconds(input[indx].timestampML).ToLongDateString(),
-                        dtDateTime.AddSeconds(input[indx].timestampML).ToLongTimeString());
-                    if (printEnabled == -1) Console.WriteLine();
-                }
-            }
-
+            var predictions = analyzeInput(input);
+            printPredictions(predictions, input);
             // Not bad with default options
             // Not bad x2 with 0.15, 12, 99
             // 0.1, 12, 99 is nice for sleeping phase trigger, physical stress etc
@@ -80,6 +58,64 @@ namespace ML.Experiments.Tests
 
             // 0.15, 1/8, 99 produces good results
             // same thing with 0.15, 1/4, 99
+            // algo couldn`t determine periodically
+        }
+
+        [Test(Description = "Define anomalies using ml framework (group to value)")]
+        public async Task detectAnomalies_ValueToGroup()
+        {
+            var dataset = await parser.readFillMergeData(true, false, false, false);
+            var input = dataset.Values
+                .Where(x=>x.AnalyticType >= HearthIntervalAnalyticType.Steady && x.AnalyticType <= HearthIntervalAnalyticType.Sleeping)
+                .OrderBy(x => x.Date)
+                .Select(x => new HearthRecordInputValueToGroup() { HRValue = x.HRValue, typeGroup = (int)x.AnalyticType, timestampML = x.timestamp })
+                .ToArray();
+            var predictions = analyzeInput(input);
+            printPredictions(predictions, input);
+            // poor data for 0.15, 0.25os, 99
+            // better for 0.3, 1024, 99
+            // nice for 0.75 -/-, but collection is obsious poor
+            // not bad for 0.05, 0.25os, 99
+            // very well for 0.1, 0.25os, but manulally readjustings/filters is required
+            // not bad for 0.05, 0.25os, but filtering required => 0.21638973969800418 / 0.15029399166547008 (10000%)
+        }
+
+        private HeartRecordPrediction[] analyzeInput<DataType>(DataType[] input) where DataType: class
+        {
+            var mlContext = new MLContext();
+            var data = mlContext.Data.LoadFromEnumerable(input);
+            var periods = mlContext.AnomalyDetection.DetectSeasonality(data, nameof(HeartRecord.HRValue));
+
+            var outputDataView = mlContext.AnomalyDetection.DetectEntireAnomalyBySrCnn(
+                data, nameof(HeartRecordPrediction.Prediction), nameof(HeartRecord.HRValue), 0.05, input.Length / 4,
+                99, SrCnnDetectMode.AnomalyAndExpectedValue);
+
+            return mlContext.Data.CreateEnumerable<HeartRecordPrediction>(outputDataView, reuseRowObject: false).ToArray();
+        }
+
+        private void printPredictions<DataType>(HeartRecordPrediction[] predictions, DataType[] input) 
+            where DataType: IHearthRecordML
+        {
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            int printEnabled = 0;
+            for (int indx = 0; indx < predictions.Length; indx++)
+            {
+                if (indx + 1 < predictions.Length)
+                {
+                    if (predictions[indx + 1].Prediction[0] == 1)
+                    {
+                        printEnabled = 3;
+                    }
+                }
+                if (printEnabled-- >= 0)
+                {
+                    Console.WriteLine("{0}: {2} at {3} \t at group {4} \t {1}", 
+                        indx, string.Join(" | ", predictions[indx].Prediction),
+                        input[indx].HRValue, dtDateTime.AddSeconds(input[indx].timestampML).ToLongDateString(),
+                        (HearthIntervalAnalyticType)input[indx].typeGroup);
+                    if (printEnabled == -1) Console.WriteLine();
+                }
+            }
         }
     }
 }

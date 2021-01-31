@@ -7,20 +7,25 @@ namespace ML.Experiments.API.Models
 {
     public class HeartRecord : DateBase, IHeartRecord
     {
-        [LoadColumn(1)]
         public byte HRValue { get; set; }
-        [LoadColumn(2)] // Unsupported in seasons detection
         public HearthIntervalAnalyticType AnalyticType { get; set; }
         public long ID { get; set; }
-
-        [LoadColumn(0)]
-        public long timestampML { get { return  timestamp; } }
+        public long timestampML { get { return timestamp; } }
     }
-    public class HearthRecordInput
+    public class HearthRecordInputTimeToValue : IHearthRecordML
     {
         [LoadColumn(1)]
         public double HRValue { get; set; }
         [LoadColumn(0)]
+        public long timestampML { get; set; }
+        public int typeGroup { get; set; }
+    }
+    public class HearthRecordInputValueToGroup : IHearthRecordML
+    {
+        [LoadColumn(1)]
+        public double HRValue { get; set; }
+        [LoadColumn(0)]
+        public int typeGroup { get; set; }
         public long timestampML { get; set; }
     }
     public class HeartRecordPrediction
