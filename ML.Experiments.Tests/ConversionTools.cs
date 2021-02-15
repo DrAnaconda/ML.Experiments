@@ -1,6 +1,5 @@
 using ML.Experiments.API.Models;
 using NUnit.Framework;
-using System.Collections.Generic;
 
 namespace ML.Experiments.Tests
 {
