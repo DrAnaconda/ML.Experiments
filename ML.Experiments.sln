@@ -3,18 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ML.Experiments.API", "ML.Experiments.API\ML.Experiments.API.csproj", "{315C7832-4995-4CF8-ADD8-B4C089950A19}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ML.Experiments.Tests.MFitX", "ML.Experiments.Tests\ML.Experiments.Tests.MFitX.csproj", "{1A5A2BE1-D274-43C9-9AB5-0E270CF115A2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{822B7EA8-D771-473B-8477-E11EB9B4115B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ML.Experiments.Tests.Bitcoin", "ML.Experiments.Tests.Bitcoin\ML.Experiments.Tests.Bitcoin.csproj", "{95466D38-A641-49FF-918D-9AB8AB415A21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ML.Experiments.Tests.KaggleTitanic", "ML.Experiments.Tests.KaggleTitanic\ML.Experiments.Tests.KaggleTitanic.csproj", "{CA28C93A-160B-4403-8BE2-46549A6EEEE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ML.Experiments.Tests.KaggleTitanic", "ML.Experiments.Tests.KaggleTitanic\ML.Experiments.Tests.KaggleTitanic.csproj", "{CA28C93A-160B-4403-8BE2-46549A6EEEE7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ML.Experiments.API", "ML.Experiments.API\ML.Experiments.API.csproj", "{AA7EED7B-A389-413F-880B-5D3064794557}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{315C7832-4995-4CF8-ADD8-B4C089950A19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{315C7832-4995-4CF8-ADD8-B4C089950A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{315C7832-4995-4CF8-ADD8-B4C089950A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{315C7832-4995-4CF8-ADD8-B4C089950A19}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A5A2BE1-D274-43C9-9AB5-0E270CF115A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A5A2BE1-D274-43C9-9AB5-0E270CF115A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A5A2BE1-D274-43C9-9AB5-0E270CF115A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -38,6 +35,10 @@ Global
 		{CA28C93A-160B-4403-8BE2-46549A6EEEE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA28C93A-160B-4403-8BE2-46549A6EEEE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA28C93A-160B-4403-8BE2-46549A6EEEE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA7EED7B-A389-413F-880B-5D3064794557}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA7EED7B-A389-413F-880B-5D3064794557}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA7EED7B-A389-413F-880B-5D3064794557}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA7EED7B-A389-413F-880B-5D3064794557}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
