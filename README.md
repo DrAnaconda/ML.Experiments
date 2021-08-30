@@ -24,4 +24,4 @@ Strategies/hypothesis:
 1. Anomaly detection based on cycade rythm
 2. Anomaly detection based on physical activity
 
-Long story story: all strategies/hypothesis are good/confirmed
+Long story short: all strategies/hypothesis are good/confirmed
